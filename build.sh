@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -eu
 OLD_DIR=$PWD
 CURR_DIR=$(dirname $0)
 cd $CURR_DIR/src

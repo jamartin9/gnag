@@ -2,16 +2,21 @@ package main
 
 import (
 	"compress/gzip"
+	"flag"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 )
 
 // image to push
 var image []byte
+var port int
+var serverPem string
+var serverKey string
 
 type gzipResponseWriter struct {
 	io.Writer
@@ -22,9 +27,16 @@ type gzipResponseWriter struct {
 func init() {
 	fmt.Println("Initializing logger")
 	Log(ioutil.Discard, os.Stdout, os.Stdout, os.Stderr)
+	Info.Println("parsing cli args")
+	var imagename string
+	flag.StringVar(&imagename, "image", "./image.png", "The path to the image")
+	flag.StringVar(&serverPem, "pem", "./server.pem", "The path to the pem")
+	flag.StringVar(&serverKey, "key", "./server.key", "The path to the key")
+	flag.IntVar(&port, "port", 1337, "Port to bind to")
+	flag.Parse()
 	Info.Println("Reading image")
 	var err error
-	image, err = ioutil.ReadFile("./image.png")
+	image, err = ioutil.ReadFile(imagename)
 	if err != nil {
 		panic(err)
 	}
@@ -75,10 +87,11 @@ func makeGzipHandler(fn http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
+// Server function for starting http server
 func Server() {
 	http.HandleFunc("/", makeGzipHandler(handlerHtml))
 	http.HandleFunc("/image", makeGzipHandler(handlerImage))
-	Info.Println("start http listening :1337")
-	err := http.ListenAndServeTLS(":1337", "server.pem", "server.key", nil)
+	Info.Println("start http listening " + strconv.Itoa(port))
+	err := http.ListenAndServeTLS(":"+strconv.Itoa(port), serverPem, serverKey, nil)
 	Error.Println(err)
 }
