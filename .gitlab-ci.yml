@@ -1,0 +1,17 @@
+image: golang:1.8
+
+before_script:
+  - go version
+  - echo $CI_BUILD_REF
+  - echo $CI_PROJECT_DIR
+
+stages:
+  - build
+
+build-project:
+  stage: build
+  script:
+    - /bin/bash $CI_PROJECT_DIR/build.sh
+  artifacts:
+    paths:
+      - bin/gnag
