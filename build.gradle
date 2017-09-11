@@ -1,0 +1,20 @@
+
+def projectName = "gnag"
+
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    classpath "gradle.plugin.com.github.blindpirate:gogradle:0.7.0"
+  }
+}
+apply plugin: 'com.github.blindpirate.gogradle'
+
+golang {
+    packagePath = 'gnag'
+}
+
+build.dependsOn check

@@ -14,4 +14,4 @@ build-project:
     - /bin/bash $CI_PROJECT_DIR/build.sh
   artifacts:
     paths:
-      - bin/gnag
+      - gnag
